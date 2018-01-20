@@ -59,6 +59,24 @@ class User extends Authenticatable
     }
     public function login(){
 
+        $username = Request::get('username');
+        $password = Request::get('password');
+        if (!$username || !$password)
+            return ['status'=>0,'msg'=>'用户名和密码都不能为空'];
+
+        $user = $this->where('username',$username)->first();
+        if (!$user)
+            return ['status'=>0,'msg'=>'用户名不存在'];
+
+        $hashed_password = $user->password;
+        if (!Hash::check($password,$hashed_password))
+            return ['status'=>0,'msg'=>'密码有误'];
+        //错误检测都通过之后 添加session
+        session()->put('username',$user->username);
+        session()->put('user_id',$user->id);
+        dd(session()->all());
+        return ['status'=>1, 'id'=>$user->id];
+
     }
 
 }

@@ -17,12 +17,12 @@ function user_ins() {
 Route::get('/', function () {
     return view('welcome');
 });
-Route::any('api/user',function (){
+Route::any('api/signup',function (){
 
    return user_ins()->signUp();
 });
 
 Route::any('api/login',function (){
-    $user = new App\User();
+
     return user_ins()->login();
 });
