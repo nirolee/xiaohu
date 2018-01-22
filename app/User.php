@@ -74,9 +74,29 @@ class User extends Authenticatable
         //错误检测都通过之后 添加session
         session()->put('username',$user->username);
         session()->put('user_id',$user->id);
-        dd(session()->all());
+//        dd(session()->all());
         return ['status'=>1, 'id'=>$user->id];
 
+    }
+    public function logout()
+    {
+        session()->forget('username');
+        session()->forget('user_id');
+//        return redirect('/'); 登出跳转到首页
+        return ['status'=> 1];
+        //session()->set('person.friend.name','paprika');嵌套赋值
+        //session()->pull('username');剪切掉
+//        session()->put('username',null);
+//        session()->put('user_id',null);
+        //清除session
+//        session()->flush();
+//        dd(session()->all());
+    }
+    public function is_logged_in()
+    {
+//        $session = session()->get('user_id');
+//        return $session;
+        return session('user_id') ?: false;
     }
 
 }
