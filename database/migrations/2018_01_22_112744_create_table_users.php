@@ -22,6 +22,7 @@ class CreateTableUsers extends Migration
             $table->string('phone')->unique()->nullable();
             $table->text('avatar_url')->nullable();
             $table->timestamps();
+
         });
     }
 
