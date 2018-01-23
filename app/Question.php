@@ -50,4 +50,17 @@ class Question extends Model
                   ->keyBy('id');  //get()得到collection keyBy得到对象
         return ['status'=> 1, 'data'=> $r];
     }
+    public  function remove() {
+        if (!user_ins()->is_logged_in())
+            return ['status'=> 0,'msg'=> 'login required'];
+        if (!Request::get('id'))
+            return ['status'=> 0,'msg'=> 'id is required'];
+        $question = $this->find(Request::get('id'));
+        if (!$question) return ['status'=> 0, 'question not exists'];
+        if (session('user_id') != $question->user_id)
+            return ['status'=> 0, 'msg'=> 'permission denied'];
+        return $question->delete() ?
+                ['status'=> 1,'msg'=> 'db delete success'] :
+                ['status'=> 0,'msg'=>'db delete failed'];
+    }
 }

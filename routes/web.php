@@ -51,3 +51,6 @@ Route::any('api/question/change',function (){
 Route::any('api/question/search',function (){
     return question_ins()->search();
 });
+Route::any('api/question/remove',function (){
+    return question_ins()->remove();
+});
