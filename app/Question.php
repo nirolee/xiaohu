@@ -21,4 +21,19 @@ class Question extends Model
                                ['status'=> 0, 'msg'=> 'db insert failed'];
 
     }
+    public function change() {
+        if (!user_ins()->is_logged_in())
+            return ['status'=> 0, 'msg'=> 'login required'];
+        if (!Request::get('id'))
+            return ['status'=> 0, 'msg'=>'id is required'];
+        $question = $this->find(Request::get('id'));
+        if ($question->user_id != session('user_id'))
+            return ['status'=> 0, 'msg'=> 'permission denied'];
+        if (Request::get('title'))
+            $question->title = Request::get('title');
+        if (Request::get('desc'))
+            $question->desc = Request::get('desc');
+        return $question->save() ? ['status'=> 1]:
+                                   ['status'=> 0,'msg'=> 'db update failed'];
+    }
 }

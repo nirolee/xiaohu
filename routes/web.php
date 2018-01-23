@@ -45,3 +45,6 @@ Route::any('api/question/create',function (){
 //http://localhost:7653/api/question/create?a=1&b=2
     return question_ins()->add();
 });
+Route::any('api/question/change',function (){
+    return question_ins()->change();
+});
