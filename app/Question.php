@@ -27,6 +27,8 @@ class Question extends Model
         if (!Request::get('id'))
             return ['status'=> 0, 'msg'=>'id is required'];
         $question = $this->find(Request::get('id'));
+        if (!$question)
+            return ['status'=>0, 'msg'=>'question not exists'];
         if ($question->user_id != session('user_id'))
             return ['status'=> 0, 'msg'=> 'permission denied'];
         if (Request::get('title'))
@@ -35,5 +37,17 @@ class Question extends Model
             $question->desc = Request::get('desc');
         return $question->save() ? ['status'=> 1]:
                                    ['status'=> 0,'msg'=> 'db update failed'];
+    }
+    public  function search() {
+        if (Request::get('id'))
+            return ['status'=> 1, 'data'=> $this->find(Request::get('id'))];
+        $limit = Request::get('limit') ?: 15;
+        $skip = (Request::get('page') ? Request::get('page') - 1 : 0) * $limit;
+        $r = $this->orderBy('created_at')
+                  ->limit($limit)
+                  ->skip($skip)
+                  ->get(['id','title','desc','user_id','created_at','updated_at'])
+                  ->keyBy('id');  //get()得到collection keyBy得到对象
+        return ['status'=> 1, 'data'=> $r];
     }
 }

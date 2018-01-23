@@ -48,3 +48,6 @@ Route::any('api/question/create',function (){
 Route::any('api/question/change',function (){
     return question_ins()->change();
 });
+Route::any('api/question/search',function (){
+    return question_ins()->search();
+});
