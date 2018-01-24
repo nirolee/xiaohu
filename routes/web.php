@@ -65,3 +65,6 @@ Route::any('api/answer/create',function (){
 Route::any('api/answer/change',function (){
     return answer_ins()->change();
 });
+Route::any('api/answer/search',function (){
+    return answer_ins()->search();
+});

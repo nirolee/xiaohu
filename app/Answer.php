@@ -42,4 +42,23 @@ class Answer extends Model
             ['status'=> 1]:
             ['status'=>0, 'msg'=> 'db update failed'];
     }
+    public function search() {
+        //有没有选择查看具体哪个问题,没有返回所有的,但是limit有限制
+            if (!Request::get('id') && !Request::get('question_id'))
+               return ['status'=> 0,'msg'=> 'id or question_id required'];
+            if (Request::get('id'))
+            {
+                $answer = $this->find(Request::get('id'));
+                if (!$answer)
+                    return ['status'=> 0, 'msg'=> 'answer not exist'];
+                return ['status'=> 1, 'data'=> $answer];
+            }
+            if (!question_ins()->find(Request::get('question_id')))
+                return ['status'=> 0,'msg'=> 'question not exists'];
+            $answers = $this->where('question_id',Request::get('question_id'))
+                            ->get()
+                            ->keyBy('id');
+            return ['status'=> 1, 'data'=> $answers];
+
+    }
 }
