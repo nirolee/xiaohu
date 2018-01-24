@@ -27,4 +27,19 @@ class Answer extends Model
                ['status'=> 1,'id'=> $this->id]:
                ['status'=> 0, 'msg'=>'db insert failed'];
     }
+    public function change() {
+
+        if (!user_ins()->is_logged_in())
+            return ['status'=> 0, 'msg'=> 'login required'];
+        if (!Request::get('id') || !Request::get('content'))
+            return ['status'=> 0, 'msg'=> 'id and content is required'];
+        $answer = $this->find(Request::get('id'));
+        if (!$answer) return ['status'=> 0, 'msg'=> 'answer not exists'];
+        if ($answer->user_id != session('user_id'))
+            return ['status'=> 0, 'msg'=> 'permission denied'];
+        $answer->content = Request::get('content');
+        return $answer->save() ?
+            ['status'=> 1]:
+            ['status'=>0, 'msg'=> 'db update failed'];
+    }
 }
