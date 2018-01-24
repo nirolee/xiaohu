@@ -17,10 +17,13 @@ function user_ins() {
 function question_ins() {
     return new App\Question;
 }
-
 function answer_ins() {
     return new App\Answer();
 }
+function comment_ins() {
+    return new App\Comment();
+}
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -67,4 +70,8 @@ Route::any('api/answer/change',function (){
 });
 Route::any('api/answer/search',function (){
     return answer_ins()->search();
+});
+
+Route::any('api/comment/create',function (){
+    return comment_ins()->add();
 });
