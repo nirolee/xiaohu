@@ -75,3 +75,6 @@ Route::any('api/answer/search',function (){
 Route::any('api/comment/create',function (){
     return comment_ins()->add();
 });
+Route::any('api/comment/search',function (){
+    return comment_ins()->search();
+});

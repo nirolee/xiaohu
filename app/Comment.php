@@ -37,10 +37,26 @@ class Comment extends Model
         }
         $this->content = Request::get('content');
         $this->user_id = session('user_id');
-
+         //存入数据库
         return $this->save() ?
             ['status'=> 1,'id'=> $this->id]:
             ['status'=> 0, 'msg'=> 'db insert failed'];
+    }
 
+    public  function  search()
+    {
+          if (!Request::get('question_id') && !Request::get('answer_id'))
+              return ['status'=>0,'msg'=> 'question_id or answer_id required'];
+          if (Request::get('question_id'))
+          {
+              $question = question_ins()->find(Request::get('question_id'));
+              if (!$question) return ['status'=> 0, 'msg'=> 'question not exists'];
+              $data = $this->where('question_id',Request::get('question_id'))->get();
+          } else {
+              $answer = answer_ins()->find(Request::get('answer_id'));
+              if (!$answer) return ['status'=> 0, 'msg'=> 'answer not exists'];
+              $data = $this->where('answer_id',Request::get('answer_id'))->get();
+          }
+          return ['status'=> 1, 'data'=> $data->keyBy('id')];
     }
 }
