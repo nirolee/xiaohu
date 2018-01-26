@@ -78,3 +78,6 @@ Route::any('api/comment/create',function (){
 Route::any('api/comment/search',function (){
     return comment_ins()->search();
 });
+Route::any('api/comment/remove',function (){
+    return comment_ins()->remove();
+});

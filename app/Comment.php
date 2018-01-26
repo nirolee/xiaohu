@@ -43,7 +43,7 @@ class Comment extends Model
             ['status'=> 0, 'msg'=> 'db insert failed'];
     }
 
-    public  function  search()
+    public function search()
     {
           if (!Request::get('question_id') && !Request::get('answer_id'))
               return ['status'=>0,'msg'=> 'question_id or answer_id required'];
@@ -58,5 +58,20 @@ class Comment extends Model
               $data = $this->where('answer_id',Request::get('answer_id'))->get();
           }
           return ['status'=> 1, 'data'=> $data->keyBy('id')];
+    }
+
+    public function remove() {
+       if (!user_ins()->is_logged_in())
+           return ['status'=> 0, 'msg'=> 'login required'];
+       if (!Request::get('id'))
+           return ['status'=> 0, 'msg'=> 'id required'];
+       $comment = $this->find(Request::get('id'));
+       if (!$comment) return ['status'=> 0, 'msg'=> 'comment not exists'];
+       if ($comment->user_id != session('user_id'))
+           return ['status'=> 0, 'msg'=> 'permission denied'];
+       //删掉评论之前要删掉与这个评论有关的其他回复,避免出现野指针
+       $this->where('reply_to',Request::get('id'))->delete();
+       return $comment->delete() ? ['status'=>1]:
+                          ['status'=> 0, 'msg'=>'db delete failed'];
     }
 }
