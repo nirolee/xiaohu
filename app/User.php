@@ -117,9 +117,14 @@ class User extends Authenticatable
           return $user->save() ?
               suc():
               err('db insert failed');
-
     }
     public function reset_password() {
+        //防止恶意短信攻击
+        $current_time = time();
+        $last_sms_time = session()->get('last_sms_time');
+        if ($current_time - $last_sms_time < 10)
+            return err('max frequency reached');
+
         if (!Request::get('phone'))
             return err('phone required');
         $user = $this->where('phone',Request::get('phone'))->first();
@@ -132,6 +137,7 @@ class User extends Authenticatable
         if ($user->save()){
             //如果验证码保存成功,发送短信
             $this->send_sms();
+            session()->put('last_sms_time',time());
             return suc();
         }
         return err('db update failed');
@@ -145,6 +151,11 @@ class User extends Authenticatable
     }
 
     public function validate_reset_password() {
+        //防止恶意短信攻击
+        $current_time = time();
+        $last_sms_time = session()->get('last_sms_time');
+        if ($current_time - $last_sms_time < 2)
+            return err('max frequency reached');
         if (!Request::get('phone') || !Request::get('phone_captcha') || !Request::get('next'))
             return err('phone new_password and phone_captcha required');
         $user = $this->where([
@@ -154,6 +165,7 @@ class User extends Authenticatable
         if (!$user)
             return err('invalid phone or captcha');
         $user->password = bcrypt(Request::get('next'));
+        session()->put('last_sms_time',time());
         return $user->save() ?
             suc() : err('db update failed');
 
