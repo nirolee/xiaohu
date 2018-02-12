@@ -175,5 +175,30 @@ class User extends Authenticatable
             ->withPivot('vote')
             ->withTimestamps();
     }
+    public function questions() {
+        return $this->belongsToMany('App\Question')
+            ->withPivot('vote')
+            ->withTimestamps();
+    }
+
+    public function read() {
+        if (!Request::get('id'))
+            return err('required id');
+        //返回指定字段
+        $get = ['id','username','avatar_url','intro'];
+        $user = $this->find(Request::get('id'),$get);
+        //模型转数组
+//        dd($user->toArray());
+        $data = $user->toArray();
+        $answer_count = $this->answers()->count();
+        //等价于: answer_ins()->where('user_id',Request::get('id'))->count();
+        $question_count = question_ins()->where('user_id',Request::get('id'))->count();
+//        $question_count = $this->questions()->count();
+        //添加字段不用声明,直接想加什么加什么
+        $data['answer_count'] = $answer_count;
+        $data['question_count'] = $question_count;
+        return suc($data);
+
+    }
 
 }
