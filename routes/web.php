@@ -11,6 +11,12 @@
 |
 */
 use Illuminate\Support\Facades\Request;
+function paginate($page = 1,$limit = 15) {
+    $limit = $limit ?: 15;
+    $skip = ($page ? $page - 1  : 0)*$limit;
+    return [$limit,$skip];
+}
+
 function user_ins() {
     return new App\User();
 }
@@ -85,3 +91,5 @@ Route::any('api/comment/search',function (){
 Route::any('api/comment/remove',function (){
     return comment_ins()->remove();
 });
+
+Route::any('api/timeline','CommonsController@timeLine');
