@@ -65,7 +65,9 @@ class User extends Authenticatable
             return ['status'=>0,'msg'=>'用户名和密码都不能为空'];
 
         $user = $this->where('username',$username)->first();
-        session()->put('password',$password);
+//        $user->password = bcrypt(111111);
+//        $user->save();
+//        dd($user);
         if (!$user)
             return ['status'=>0,'msg'=>'用户名不存在'];
 
@@ -76,14 +78,13 @@ class User extends Authenticatable
         session()->put('username',$user->username);
         session()->put('user_id',$user->id);
 //        dd(session()->all());
-        return ['status'=>1, 'id'=>$user->id];
+        return suc(['id' => $user->id]);
 
     }
     public function logout()
     {
         session()->forget('username');
         session()->forget('user_id');
-        session()->forget('password');
 //        return redirect('/'); 登出跳转到首页
         return ['status'=> 1];
         //session()->set('person.friend.name','paprika');嵌套赋值
@@ -103,16 +104,58 @@ class User extends Authenticatable
     public function change_password() {
 
           if (!$this->is_logged_in())
-              return ['status'=>0,'msg'=>'login required'];
-          if (!Request::get('new') || !Request::get('old'))
-              return ['status'=>0, 'msg'=>'new and old password required'];
+              return err('login required');
+          if (!Request::get('prev') || !Request::get('next'))
+              return err('new and old password required');
           $user = $this->find(session('user_id'));
-          if (!Hash::check(Request::get('old'),$user->password))
-              return ['status'=>0,'msg'=>'old password not correct'];
-          $user->password = bcrypt(Request::get('new'));
+//          $user->password = bcrypt(111111);
+//          $user->save();
+//          dd($user);
+          if (!Hash::check(Request::get('prev'),$user->password))
+              return err('old password not correct');
+          $user->password = bcrypt(Request::get('next'));
           return $user->save() ?
-              ['status'=>1]:
-              ['status'=>0,'msg'=>'db insert failed'];
+              suc():
+              err('db insert failed');
+
+    }
+    public function reset_password() {
+        if (!Request::get('phone'))
+            return err('phone required');
+        $user = $this->where('phone',Request::get('phone'))->first();
+        if (!$user)
+            return err('invalid phone number');
+        //生成验证码
+        $captcha = $this->generate_captcha();
+
+        $user->phone_captcha = $captcha;
+        if ($user->save()){
+            //如果验证码保存成功,发送短信
+            $this->send_sms();
+            return suc();
+        }
+        return err('db update failed');
+    }
+
+    public function generate_captcha() {
+        return rand(1000,9999);
+    }
+    public function send_sms() {
+        return true;
+    }
+
+    public function validate_reset_password() {
+        if (!Request::get('phone') || !Request::get('phone_captcha') || !Request::get('next'))
+            return err('phone new_password and phone_captcha required');
+        $user = $this->where([
+            'phone'=>Request::get('phone'),
+            'phone_captcha'=>Request::get('phone_captcha')
+        ])->first();
+        if (!$user)
+            return err('invalid phone or captcha');
+        $user->password = bcrypt(Request::get('next'));
+        return $user->save() ?
+            suc() : err('db update failed');
 
     }
     public function answers() {

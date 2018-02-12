@@ -17,6 +17,17 @@ function paginate($page = 1,$limit = 15) {
     return [$limit,$skip];
 }
 
+function err($msg=null) {
+    return ['status'=>0,'msg'=>$msg];
+}
+
+function suc($data_to_merge=null) {
+   $data = ['status'=>1];
+   if ($data_to_merge)
+       $data = array_merge($data,$data_to_merge);
+   return $data;
+}
+
 function user_ins() {
     return new App\User();
 }
@@ -95,4 +106,10 @@ Route::any('api/comment/remove',function (){
 Route::any('api/timeline','CommonsController@timeLine');
 Route::any('api/user/change_password',function (){
     return user_ins()->change_password();
+});
+Route::any('api/user/reset_password',function (){
+    return user_ins()->reset_password();
+});
+Route::any('api/user/validate_reset_password',function (){
+    return user_ins()->validate_reset_password();
 });
