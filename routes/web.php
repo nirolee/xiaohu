@@ -93,3 +93,6 @@ Route::any('api/comment/remove',function (){
 });
 
 Route::any('api/timeline','CommonsController@timeLine');
+Route::any('api/user/change_password',function (){
+    return user_ins()->change_password();
+});

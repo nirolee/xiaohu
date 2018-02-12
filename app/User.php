@@ -65,6 +65,7 @@ class User extends Authenticatable
             return ['status'=>0,'msg'=>'用户名和密码都不能为空'];
 
         $user = $this->where('username',$username)->first();
+        session()->put('password',$password);
         if (!$user)
             return ['status'=>0,'msg'=>'用户名不存在'];
 
@@ -82,6 +83,7 @@ class User extends Authenticatable
     {
         session()->forget('username');
         session()->forget('user_id');
+        session()->forget('password');
 //        return redirect('/'); 登出跳转到首页
         return ['status'=> 1];
         //session()->set('person.friend.name','paprika');嵌套赋值
@@ -97,6 +99,21 @@ class User extends Authenticatable
 //        $session = session()->get('user_id');
 //        return $session;
         return session('user_id') ?: false;
+    }
+    public function change_password() {
+
+          if (!$this->is_logged_in())
+              return ['status'=>0,'msg'=>'login required'];
+          if (!Request::get('new') || !Request::get('old'))
+              return ['status'=>0, 'msg'=>'new and old password required'];
+          $user = $this->find(session('user_id'));
+          if (!Hash::check(Request::get('old'),$user->password))
+              return ['status'=>0,'msg'=>'old password not correct'];
+          $user->password = bcrypt(Request::get('new'));
+          return $user->save() ?
+              ['status'=>1]:
+              ['status'=>0,'msg'=>'db insert failed'];
+
     }
     public function answers() {
         return $this->belongsToMany('App\Answer')
