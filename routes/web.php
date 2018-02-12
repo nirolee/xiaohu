@@ -15,7 +15,7 @@ function user_ins() {
     return new App\User();
 }
 function question_ins() {
-    return new App\Question;
+    return new App\Question();
 }
 function answer_ins() {
     return new App\Answer();
@@ -70,6 +70,10 @@ Route::any('api/answer/change',function (){
 });
 Route::any('api/answer/search',function (){
     return answer_ins()->search();
+});
+
+Route::any('api/answer/vote',function (){
+    return answer_ins()->vote();
 });
 
 Route::any('api/comment/create',function (){

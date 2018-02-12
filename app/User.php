@@ -98,5 +98,10 @@ class User extends Authenticatable
 //        return $session;
         return session('user_id') ?: false;
     }
+    public function answers() {
+        return $this->belongsToMany('App\Answer')
+            ->withPivot('vote')
+            ->withTimestamps();
+    }
 
 }
