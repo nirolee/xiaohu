@@ -1,6 +1,18 @@
 body{
     padding:0;
     margin:0;
+    background: #EEEEEE;
+}
+.card {
+    display: block;
+    padding: 10px 10px;
+    border-radius: 4px;
+    background: #FFFFFF;
+    box-shadow: 0 1px 2px 1px rgba(0,0,0,.1);
+}
+h3 {
+    margin-top: 0;
+    font-size: 25px;
 }
 
 .fl{
@@ -9,6 +21,7 @@ body{
 
 .fr{
     float:right;
+    margin-right: 15px;
 }
 
 .clearfix:after,
@@ -20,11 +33,20 @@ body{
 
 .navbar{
     background:orangered;
+    color: #FFFFFF;
+}
+.navbar a {
+    color: #FFFFFF;
+}
+a {
+    text-decoration: none;
 }
 
 .navbar-item{
     display:inline-block;
     line-height: 2.0;
+    margin-left: 15px;
+    padding-top: 10px;
 }
 
 .brand{
@@ -41,6 +63,58 @@ body{
 .container input{
     height:40px;
 }
+.container.register {
+    width: 500px;
+    margin-top: 15px;
+}
 [ui-sref] {
     cursor: pointer;
 }
+
+form,label{
+    display: block;
+}
+label {
+    margin: 4px 0;
+    font-size: 18px;
+}
+
+input {
+    width: 90%;
+    border: 1px solid rgba(0,0,0,.1);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    font-size: 18px;
+    outline: none;
+}
+.input-group {
+    margin-bottom: 10px;
+}
+.input-error-set {
+    color: red;
+    font-size: 14px;
+    margin: 5px 5px;
+}
+
+button {
+    font-size: 18px;
+    border: 1px solid rgba(0,0,0,.1);
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    outline: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
